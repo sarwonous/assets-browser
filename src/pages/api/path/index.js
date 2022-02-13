@@ -1,25 +1,30 @@
-import { Storage } from "@google-cloud/storage";
-import fs from 'fs';
-const storage = new Storage({
-    keyFilename: "config/cloud-340705-f10697072688.json"
-});
-
-const STORAGE_URL = 'https://storage.googleapis.com/';
-const BUCKET = 'suga-buckets';
+import { getFiles } from "../../../libs/cloud";
 
 export default async function handler(req, res) {
     const path = (req.query.path || []).join("/");
+    const limit = req.query.limit > 0 ? req.query.limit : false;
+    const token = req.query.next || "";
     // get list of buckets
     try {
-        let files = await storage.bucket(BUCKET).getFiles({
-            prefix: "/",
+        const options = {
+            // prefix: `${path}/`,
             delimiter: '/',
+        };
+        if (path != "") {
+            options.prefix = `${path}/`;
+        }
+        if (limit) {
+            options.maxResults = limit;
+            options.autoPaginate = false;
+            if (token) {
+                options.pageToken = token;
+            }
+        }
+        let [files, nextToken] = await getFiles(options);
+        res.send({
+            files: files,
+            nextToken,
         });
-        files = files[0].map(file => ({
-            size: +(file.metadata?.size || 0),
-            name: file.publicUrl(),
-        })),
-        res.send(files);
     } catch (error) {
         console.log(error);
         res.send("ok")
