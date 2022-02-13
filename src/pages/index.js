@@ -73,7 +73,7 @@ const Item = ({
     if (loading) {
         return (
             <div
-                className="w-1/2 sm:w-1/4 md:w-1/12 p-1 align-middle"
+                className="w-1/3 sm:w-1/4 md:w-2/12 lg:w-1/12 p-1 align-middle"
                 >
                 <div className="rounded overflow-clip md:hover:shadow-lg cursor-pointer ">
                     <div className="bg-white h-full max-w-full align-middle justify-center h-16">
@@ -85,7 +85,7 @@ const Item = ({
     }
     return (
         <div
-            className="w-1/2 sm:w-1/4 md:w-1/12 p-1 justify-center align-middle "
+            className="w-1/3 sm:w-1/4 md:w-2/12 lg:w-1/12 p-1 justify-center align-middle "
             onClick={() => {
                 if (loading) return;
                 if (fileType.image.includes(image.filetype)) {
@@ -178,39 +178,44 @@ function HomePage({ data = [], start_path, ...props }) {
 
     return (
         <>
-            <div className="bg-slate-800 text-white p-3">
+            <div className="bg-slate-800 text-white px-3">
                 <div className="container mx-auto">
-                    <div>
-                        <h1 className="text-4xl py-3">Okadoc Images</h1>
-                        <p className="">Collection icon on Okadoc Assets</p>
+                    <div className="py-5">
+                        <h1 className="text-2xl sm:text-4xl py-3 text-center sm:text-left">{props.site_title}</h1>
+                        <p className=" text-center sm:text-left">{props.site_description}</p>
                     </div>
                 </div>
             </div>
-            <div className="container mx-auto">
-                <div className="py-5">
-                    <input placeholder="Search assets" className="border w-full p-3 rounded" type="text" value={keyword} onChange={onKeywordChange}></input>
-                </div>
-                <div className="w-1/1">
-                    <div className="flex flex-wrap overflow-y-auto">
-                        {loadingAssests && (Array.from(Array(18).keys())).map(i => (
-                            <Item
-                                key={i}
-                                loading
-                                />
-                        ))}
-                        {!loadingAssests && filteredFiles.map((image, i) => {
-                            image.other = !fileType.document.includes(image.filetype) && !fileType.image.includes(image.filetype);
-                            if (!image || (image.url && image.url.indexOf("http") < 0))
-                                return null;
-                            return (
+            <div className="px-3">
+                <div className="container mx-auto">
+                    <div className="py-5">
+                        <input placeholder="Search assets" className="border w-full p-3 rounded" type="text" value={keyword} onChange={onKeywordChange}></input>
+                    </div>
+                    <div className="w-1/1">
+                        <div className="flex flex-wrap overflow-y-auto">
+                            {loadingAssests && (Array.from(Array(18).keys())).map(i => (
                                 <Item
                                     key={i}
-                                    image={image}
-                                    setSelectedImage={setSelectedImage}
-                                    copyText={copyText}
+                                    loading
                                     />
-                            );
-                        })}
+                            ))}
+                            {!loadingAssests && filteredFiles.map((image, i) => {
+                                image.other = !fileType.document.includes(image.filetype) && !fileType.image.includes(image.filetype);
+                                if (!image || (image.url && image.url.indexOf("http") < 0))
+                                    return null;
+                                return (
+                                    <Item
+                                        key={i}
+                                        image={image}
+                                        setSelectedImage={setSelectedImage}
+                                        copyText={copyText}
+                                        />
+                                );
+                            })}
+                            {!loadingAssests && filteredFiles.length < 1 && (
+                                <div className="text-gray-500">No assets found, try another keyword</div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -221,7 +226,9 @@ function HomePage({ data = [], start_path, ...props }) {
 export async function getStaticProps() {
   return {
     props: {
-      start_path: process.env.START_PATH,
+      start_path: process.env.START_PATH || '',
+      site_title: process.env.SITE_TITLE || '',
+      site_description: process.env.SITE_DESCRIPTION || '',
     }, // will be passed to the page component as props
     revalidate: 1
   };
