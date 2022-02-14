@@ -27,7 +27,7 @@ if (fs.existsSync(process.env.CREDENTIAL_FILE)) {
         credentials: authJson,
     };
 }
-
+console.log(options);
 const storage = new Storage(options);
 
 export const getFiles = async(options = {}) => {
