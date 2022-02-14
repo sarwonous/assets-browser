@@ -6,6 +6,25 @@ import {
     PhotographIcon,
 } from '@heroicons/react/outline';
 import Skeleton from "react-loading-skeleton";
+import classNames from "classnames";
+import toast, { Toaster } from 'react-hot-toast';
+import styles from '../styles/index.module.scss';
+
+const notify = () => {
+    toast.custom(
+        (t) => (
+            <div
+                className={classNames([
+                styles.notificationWrapper,
+                t.visible ? "top-0" : "-top-96",
+                ])}
+            >
+                URL copied to clipboard
+            </div>
+        ),
+        { id: "unique-notification", position: "top-center" }
+    )
+}
 
 const IconType = {
     document: DocumentIcon,
@@ -75,7 +94,7 @@ const Item = ({
             <div
                 className="w-1/3 sm:w-1/4 md:w-2/12 lg:w-1/12 p-1 align-middle"
                 >
-                <div className="rounded overflow-clip md:hover:shadow-lg cursor-pointer ">
+                <div className="rounded overflow-clip md:hover:shadow-lg">
                     <div className="bg-white h-full max-w-full align-middle justify-center h-16">
                         <Skeleton containerClassName="block h-full" className="block h-full" />
                     </div>
@@ -87,17 +106,73 @@ const Item = ({
         <div
             className="w-1/3 sm:w-1/4 md:w-2/12 lg:w-1/12 p-1 justify-center align-middle "
             onClick={() => {
-                if (loading) return;
-                if (fileType.image.includes(image.filetype)) {
-                    setSelectedImage(image);
-                }
-                copyText(`name-${image.i}`);
+                
             }}
             >
-            <div className="p-2 overflow-clip md:hover:shadow-lg cursor-pointer border rounded ">
-                <div className="bg-white h-full max-w-full align-middle flex justify-center h-16">
+            <div className="group p-2 overflow-clip md:hover:shadow-lg border rounded ">
+                <div className="bg-white h-full max-w-full align-middle flex justify-center h-24">
                     {fileType.image.includes(image.filetype) && (
-                        <img className="w-max-100 h-max-100" src={image.url} alt={image.name} />
+                        <div className="
+                            h-full
+                            w-full
+                            bg-contain
+                            bg-no-repeat
+                            bg-center
+                            w-max-100
+                            h-max-100
+                            flex
+                            flex-col
+                            justify-center
+                            items-center
+                            relative
+                            cursor-pointer
+                            "
+                            style={{
+                                backgroundImage: `url(${image.url})`,
+                            }}
+                        >
+                        <div className="absolute opacity-0 group-hover:opacity-90 rounded top-0 left-0 w-full h-full flex justify-center items-center backdrop-blur-sm bg-black">
+
+                        </div>
+                        <a onClick={() => {
+                            if (loading) return;
+                            if (fileType.image.includes(image.filetype)) {
+                                setSelectedImage(image);
+                            }
+                            copyText(`name-${image.i}`);
+                        }} className="
+                            m-2
+                            bg-emerald-600
+                            text-white
+                            delay-75
+                            opacity-0
+                            rounded
+                            transition
+                            ease-in-out
+                            text-sm
+                            mb-1
+                            p-1
+                            translate-y-1
+                            group-hover:translate-y-0
+                            group-hover:opacity-100
+                            hover:bg-emerald-400
+                            hover:text-white" title="Copy asset URL">Copy URL</a>
+                        <a href={image.url} target="_blank" rel="noopener noreferer" className="
+                        m-2
+                        text-sky-100
+                        delay-75
+                        translate-y-1
+                        opacity-0
+                        p-1
+                        rounded
+                        transition
+                        ease-in-out
+                        text-sm
+                        group-hover:translate-y-0
+                        group-hover:opacity-100
+                        underline
+                        hover:text-sky-200" title="Open in new Tab">Open</a>
+                        </div>
                     )}
                     {fileType.document.includes(image.filetype) && (
                         <DocumentIcon className="hidden" />
@@ -111,6 +186,10 @@ const Item = ({
             <div className="text-center text-xs p-2">{image.name}</div>
         </div>
     );
+}
+
+const Preview = () => {
+    return null;
 }
 
 function HomePage({ data = [], start_path, ...props }) {
@@ -155,7 +234,8 @@ function HomePage({ data = [], start_path, ...props }) {
         navigator.clipboard.writeText(el.value);
         el.blur()
         el.style = 'position: absolute; top:-30px; left: 0;';
-        alert('Copied to clipboard');
+        // alert('Copied to clipboard');
+        notify();
     }
 
     const startLoad = () => {
@@ -219,6 +299,8 @@ function HomePage({ data = [], start_path, ...props }) {
                     </div>
                 </div>
             </div>
+            <Toaster />
+            <Preview />
         </>
     );
 }
