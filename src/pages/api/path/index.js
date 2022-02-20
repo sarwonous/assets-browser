@@ -1,7 +1,6 @@
 import { getFiles } from "../../../libs/cloud";
 
 export default async function handler(req, res) {
-    const path = (req.query.path || []).join("/");
     const limit = req.query.limit > 0 ? req.query.limit : false;
     const token = req.query.next || "";
     // get list of buckets
@@ -10,9 +9,6 @@ export default async function handler(req, res) {
             // prefix: `${path}/`,
             delimiter: '/',
         };
-        if (path != "") {
-            options.prefix = `${path}/`;
-        }
         if (limit) {
             options.maxResults = limit;
             options.autoPaginate = false;
@@ -26,7 +22,8 @@ export default async function handler(req, res) {
             nextToken,
         });
     } catch (error) {
-        console.log(error);
-        res.send("ok")
+        res.status(500).json({
+            error: error.message,
+        });
     } 
 }

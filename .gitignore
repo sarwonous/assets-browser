@@ -1,4 +1,4 @@
 node_modules
 .next
 .env
-*.google-config.json
+*local-config.json
