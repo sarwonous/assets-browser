@@ -1,4 +1,4 @@
-import { loadBuckets } from "../../libs/bucket";
+import { loadBuckets } from "../../libs/cloud";
 export default async function handler(req, res) {
     try {
         const buckets = await loadBuckets();
