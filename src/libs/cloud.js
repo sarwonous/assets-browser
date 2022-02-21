@@ -81,8 +81,11 @@ export const newFile = async(bucket, name) => {
 
 export const loadBuckets = async() => {
     try {
-        const res = await fsp.readFile(process.env.BUCKET_CONFIG_FILE, 'utf8');
-        const config = JSON.parse(res);
+        let config = process.env.BUCKETS;
+        if (fs.existsSync(process.env.BUCKET_CONFIG_FILE)) {
+            config = await fsp.readFile(process.env.BUCKET_CONFIG_FILE, 'utf8');
+        }
+        config = JSON.parse(config);
         return config.buckets || [];
     } catch (error) {
         throw error;
