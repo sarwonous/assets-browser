@@ -1,5 +1,7 @@
 #!/bin/bash
 cd ./
+BUCKET_NAME=bucket-config.json
+CREDENTIAL_FILE=google-config.json
 if [ -z "$BUCKET_NAME" ]
 then
     if [ -z "$CREDENTIAL_FILE" ]
