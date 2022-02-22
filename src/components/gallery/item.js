@@ -199,7 +199,7 @@ const Item = ({
                     <input className="absolute top-0 left-0 hidden" type="input" id={`name-${image.i}`} defaultValue={`${image.url}`} />
                 </div>
             </div>
-            <div className="text-center text-xs p-2">{image.name}</div>
+            <div className="text-center text-xs p-2 break-words truncate">{image.name}</div>
         </div>
     );
 }
