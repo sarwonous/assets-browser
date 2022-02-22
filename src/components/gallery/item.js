@@ -136,7 +136,7 @@ const Item = ({
                             }}
                         >
                             <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-                                <img src={image.url} alt={image.name} />
+                                <img src={image.url} alt={image.name} className="max-h-full max-w-full" />
                             </div>
                             <div className="absolute opacity-0 group-hover:opacity-10 rounded top-0 left-0 w-full h-full flex justify-center items-center backdrop-blur-sm bg-black" />
                             <div className="top-0 left-0 w-full h-full flex flex-col items-center justify-center">
