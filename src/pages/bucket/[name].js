@@ -152,7 +152,7 @@ const Bucket = ({
                         <input placeholder="Search assets" className="border w-full p-3 rounded" type="text" value={keyword} onChange={onKeywordChange}></input>
                     </div>
                     <Gallery
-                        files={files}
+                        files={files.filter(file => file.name.toLowerCase().includes(keyword.toLowerCase()))}
                         loading={loading} 
                         next={next} 
                         keyword={keyword}
