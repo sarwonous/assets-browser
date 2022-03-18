@@ -4,6 +4,24 @@ import fs from "fs";
 import fsp from "fs/promises";
 import { getFileType } from "./file";
 
+let config = false;
+
+export const readConfig = () => {
+    try {
+        const fconfig = fs.readFileSync(process.env.BUCKET_CONFIG_FILE);
+        const parsed = JSON.parse(fconfig);
+        return {
+            cors: {
+                method: ["PUT"],
+                origin: ["*"]
+            },
+            ...parsed
+        }
+    } catch (error) {
+        return {};
+    }
+}
+
 let storageOptions = {};
 if (fs.existsSync(process.env.CREDENTIAL_FILE)) {
     storageOptions = {
@@ -37,14 +55,20 @@ export const getFiles = async(bucket, options = {}) => {
     }
     try {
         const bucketLists = await storage.bucket(bucket).getFiles(options);
+        const bucketConfig = getConfig().buckets.find(b => b.name === bucket);
         let files = (bucketLists[0] || []).map(file => {
+            let publicUrl = file.publicUrl();
+            for(var search in bucketConfig.replaceURL) {
+                publicUrl = publicUrl.replace(search, bucketConfig.replaceURL[search]);
+            }
             return {
                 size: +(file.metadata?.size || 0),
                 isDir: file.name.charAt(file.name.length - 1) === '/',
                 name: path.basename(file.name),
-                url:  file.publicUrl(),
+                url:  publicUrl,
                 ext: file.name.split(".").pop(),
                 filetype: getFileType(file.name.split(".").pop()),
+                metadata: file.metadata
             };
         });
         return [files, bucketLists[2]?.nextPageToken];
@@ -55,39 +79,25 @@ export const getFiles = async(bucket, options = {}) => {
 
 export const newFile = async(bucket, name) => {
     try {
-        const maxAgeSeconds = 3600;
-        const responseHeader = '*';
-        const method = "PUT";
-        const origin = 'https://assets.local';
-        await storage.bucket(bucket).setCorsConfiguration([
-            {
-              maxAgeSeconds,
-              method: [method],
-              origin: [origin],
-              responseHeader: [responseHeader],
-            },
-          ]);
-          console.log(`Bucket ${bucket} was updated with a CORS config
-          to allow ${method} requests from ${origin} sharing 
-          ${responseHeader} responses across origins`);
         const b = await storage.bucket(bucket).file(name);
         return b;
     } catch (err) {
-        console.log(err);
         throw err;
     }
 }
 
-
 export const loadBuckets = async() => {
     try {
-        let config = process.env.BUCKETS;
-        if (fs.existsSync(process.env.BUCKET_CONFIG_FILE)) {
-            config = await fsp.readFile(process.env.BUCKET_CONFIG_FILE, 'utf8');
-        }
-        config = JSON.parse(config);
-        return config.buckets || [];
+
+        return getConfig().buckets || [];
     } catch (error) {
         throw error;
     }
+}
+
+export const getConfig = () => {
+    if (!config.app_url) {
+        config = readConfig();
+    }
+    return config;
 }

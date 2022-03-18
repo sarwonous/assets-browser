@@ -101,16 +101,16 @@ const Bucket = ({
         }, `/bucket/${e.target.value}`);
     }
 
-    const onCopyText = (name) => {
-        const el = document.getElementById(name);
-        console.log('name', name);
+    const onCopyText = (value) => {
+        const el = document.getElementById('copyclip');
+        el.value = value;
         el.style = 'position: relative;';
         el.focus();
         el.select();
         el.setSelectionRange(0, 99999999);
         navigator.clipboard.writeText(el.value);
         el.blur()
-        el.style = 'position: absolute; top:-30px; left: 0;';
+        el.style = 'position: absolute; top:-30px; left: -99999px;';
         // alert('Copied to clipboard');
         notify();
     }
@@ -164,7 +164,7 @@ const Bucket = ({
                                 const [err, ok] = await to(axios.delete(`/api/delete`, {
                                     headers: {
                                         'x-bucket-name': name,
-                                        'x-file-name': e.name
+                                        'x-file-name': e.metadata.name
                                     }
                                 }));
                                 if (ok) {
@@ -177,6 +177,7 @@ const Bucket = ({
                         />
                 </div>
             </div>
+            <input type="text" id="copyclip" style={{ position: 'absolute', left: '-9999px' }} />
             <Toaster />
             <Modal show>
                 <div className="p-13">

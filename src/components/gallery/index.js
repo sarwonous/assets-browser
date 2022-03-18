@@ -34,6 +34,7 @@ const Gallery = ({
                                 onCopyText={onCopyText}
                                 onDelete={onDelete}
                                 allowDelete={allowDelete}
+                                i={i}
                                 />
                         );
                     })}

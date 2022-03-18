@@ -1,5 +1,6 @@
 import to from "await-to-js";
 import { newFile } from "../../libs/cloud";
+import enabled from "../../libs/middleware/enabled";
 
 export default async function handler(req, res) {
     await enabled('delete');
@@ -14,7 +15,7 @@ export default async function handler(req, res) {
     const [err, file] = await to(newFile(bucket, name));
     if (err) {
         res.status(500).send({
-            error: 'file request error'
+            error: 'file request error',
         });
         return;
     }

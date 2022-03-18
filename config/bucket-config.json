@@ -1,8 +1,12 @@
 {
     "buckets": [
+        
         {
-            "name": "suga-buckets",
-            "root": "/"
+            "name": "image",
+            "root": "/",
+            "replaceURL": {
+                "https://storage.googleapis.com/": "https://"
+            }
         }
     ]
 }

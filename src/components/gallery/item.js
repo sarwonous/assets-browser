@@ -142,7 +142,7 @@ const Item = ({
                             <div className="top-0 left-0 w-full h-full flex flex-col items-center justify-center">
                                 <ButtonCopy
                                     onClick={() => {
-                                        onCopyText(`name-${image.i}`);
+                                        onCopyText(image.url);
                                     }}
                                     title={'Copy file URL'}
                                     >
@@ -196,7 +196,7 @@ const Item = ({
                             <QuestionMarkCircleIcon className="h-6" />
                         </div>
                     )}
-                    <input className="absolute top-0 left-0 hidden" type="input" id={`name-${image.i}`} defaultValue={`${image.url}`} />
+                    {/* <input className="absolute top-0 left-0 hidden" type="input" id={`name-${i}`} defaultValue={`${image.url}`} /> */}
                 </div>
             </div>
             <div className="text-center text-xs p-2 break-words truncate">{image.name}</div>
